@@ -26,7 +26,7 @@
 BUTTON_BACKGROUND 		= "black"
 MAIN_FRAME_BACKGROUND 	= "cornflowerblue"
 BUTTON_LOOK 			= "flat" #flat, groove, raised, ridge, solid, or sunken
-TOP_BAR_TITLE 			= "Python Pāli/Sanskrit Virtual KeyBoard."
+TOP_BAR_TITLE 			= "pyPaliSanskrit-VK"
 TOPBAR_BACKGROUND 		= "skyblue"
 TRANSPARENCY 			= 0.7
 FONT_COLOR 				= "white"
@@ -114,8 +114,7 @@ class Keyboard(Tkinter.Frame):
 
 		# Function For Detecting Pressed Keyword.
 	def button_command(self, event):
-		pyautogui.press(event)
-		print(event)
+		#for unicode characters it is easier to use this workaround than to send to pyautogui.press()
 		pyperclip.copy(event)
 		pyautogui.hotkey("ctrl", "v")
 		return
