@@ -10,6 +10,8 @@
 2. pyperclip
 3. tkinter
 
+# Portable app for Windows / Linux / Mac OS
+Coming soon
 
 # ScreenShot
 
