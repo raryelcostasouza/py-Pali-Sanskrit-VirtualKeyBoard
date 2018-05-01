@@ -1,38 +1,32 @@
 #!/usr/bin/python
-# ---------------- READ ME ---------------------------------------------
-# This Script is Created Only For Practise And Educational Purpose Only
-# This Script Is Created For http://bitforestinfo.blogspot.com
-# This Script is Written By
-#
-#
-##################################################
-######## Please Don't Remove Author Name #########
-############### Thanks ###########################
-##################################################
-#
-#
-__author__='''
+#Copyright 2018 Raryel C. Souza
 
-######################################################
-                By S.S.B Group                          
-######################################################
+#Licensed under the Apache License, Version 2.0 (the "License");
+#you may not use this file except in compliance with the License.
+#You may obtain a copy of the License at
 
-    Suraj Singh
-    Admin
-    S.S.B Group
-    surajsinghbisht054@gmail.com
-    http://bitforestinfo.blogspot.com/
+#    http://www.apache.org/licenses/LICENSE-2.0
 
-    Note: We Feel Proud To Be Indian
-######################################################
-'''
+#Unless required by applicable law or agreed to in writing, software
+#distributed under the License is distributed on an "AS IS" BASIS,
+#WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#See the License for the specific language governing permissions and
+#limitations under the License.
 
+
+#pyPaliSanskritVK
+#Virtual keyboard for input of Pāli/Sanskrit Diacritics
+
+#Based on the project py-virtual-keyboard (https://github.com/surajsinghbisht054/py-VirtualKeyBoard), 
+#developed by S.S.B Group (surajsinghbisht054@gmail.com / http://bitforestinfo.blogspot.com/) written in python using Tkinter And pyautogui
+
+#Modifications for Pāli/Sanskrit Diacritics by Raryel C. Souza
 
 # ========== Configurations ====================
 BUTTON_BACKGROUND 		= "black"
 MAIN_FRAME_BACKGROUND 	= "cornflowerblue"
 BUTTON_LOOK 			= "flat" #flat, groove, raised, ridge, solid, or sunken
-TOP_BAR_TITLE 			= "Python Virtual KeyBoard."
+TOP_BAR_TITLE 			= "Python Pāli/Sanskrit Virtual KeyBoard."
 TOPBAR_BACKGROUND 		= "skyblue"
 TRANSPARENCY 			= 0.7
 FONT_COLOR 				= "white"
@@ -46,6 +40,7 @@ except:
     import tkinter as Tkinter
 
 import pyautogui
+import pyperclip
 
 keys =[ 
 [
@@ -53,91 +48,19 @@ keys =[
 # ===== Keyboard Configurations ===========
 # =========================================
 
-	[
-		# Layout Name
-		("Function_Keys"),
-
-		# Layout Frame Pack arguments
-		({'side':'top','expand':'yes','fill':'both'}),
-		[
-			# list of Keys
-			('esc', 'F1', 'F2','F3','F4','F5','F6','F7','F8','F9','F10','F11','F12')
-		]
-	],
-
+	
 	[
 		("Character_Keys"),
 		({'side':'top','expand':'yes','fill':'both'}),
 		[
-			('`',',','.','/','-','=','\\','[',']','backspace'),
-			('~','!','@','#','$','%','^','&','*','(',')','_','+','|'),
-			('tab','q','w','e','r','t','y','u','i','o','p','{','}',";",'\''),
-			('capslock','a','s','d','f','g','h','j','k','l',':',"\"","enter"),
-			("shift",'z','x','c','v','b','n','m','<','>','?',"shift"),
-			("ctrl", "win",'alt','space  ','alt','win','[=]','ctrl')
+			('Ā','Ḍ','Ī','Ḷ','Ṃ','Ṅ','Ṇ','Ñ','Ṭ','Ū'),
+			('ā','ḍ','ī','ḷ','ṃ','ṅ','ṇ','ñ','ṭ','ū'),
+			(' ',' ',' ',' ','ṁ',' ',' ',' ',' ',' '),
+			('Ḥ','Ḹ','Ṛ','Ṝ','Ṣ','Ś','Ṭ'),
+			('ḥ','ḹ','ṛ','ṝ','ṣ','ś','ṭ'),
 		]
 	]
 ],
-[
-	[
-		("System_Keys"),
-		({'side':'top','expand':'yes','fill':'both'}),
-		[
-			(
-				"printscreen",
-				"scrolllock",
-				"pause"
-			)
-		]
-	],
-	[          
-		("Editing_Keys"),
-		({'side':'top','expand':'yes','fill':'both'}),
-		[
-			(
-				"insert",
-				"home",
-				"pageup"
-				),
-			(	"delete",
-				"end",
-				"pagedown"
-				),
-
-		]
-	],
-
-	[
-		("Navigation_Keys"),
-		({'side':'top','expand':'yes','fill':'both'}),
-		[
-			(
-				"up",
-				),
-			(	"right",
-				"down",
-				"left"
-				),
-		]
-	],
-
-],
-[
-
-	[
-		("Numeric_Keys"),
-		({'side':'top','expand':'yes','fill':'both'}),
-		[
-			("numlock","/","*"),
-			("7","8","9","+"),
-			("4","5","6","-"),
-			("1","2","3","0"),
-			(".","enter")
-		]
-	],
-
-]
-
 ]
 
 # Create key event
@@ -173,7 +96,7 @@ class Keyboard(Tkinter.Frame):
 					store_key_frame = Tkinter.Frame(store_layer)
 					store_key_frame.pack(side='top',expand='yes',fill='both')
 					for k in key_bunch:
-						k=k.capitalize()
+						
 						if len(k)<=3:
 							store_button = Tkinter.Button(store_key_frame, text=k, width=2, height=2)
 						else:
@@ -185,13 +108,16 @@ class Keyboard(Tkinter.Frame):
 						store_button['bg']=BUTTON_BACKGROUND
 						store_button['fg']=FONT_COLOR
 
-						store_button['command']=lambda q=k.lower(): self.button_command(q)
+						store_button['command']=lambda q=k: self.button_command(q)
 						store_button.pack(side='left',fill='both',expand='yes')
 		return
 
 		# Function For Detecting Pressed Keyword.
 	def button_command(self, event):
 		pyautogui.press(event)
+		print(event)
+		pyperclip.copy(event)
+		pyautogui.hotkey("ctrl", "v")
 		return
 
 class top_moving_mechanism:
@@ -231,4 +157,3 @@ def main():
 # Function Trigger
 if __name__=='__main__':
 	main()
-
