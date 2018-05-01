@@ -1,5 +1,5 @@
 # pyPāliSanskrit-VK
-## Virtual keyboard for input of Pali/Sanskrit Diacritics written in python using Tkinter And pyautogui
+## Virtual keyboard for input of Pali/Sanskrit Diacritics
 #Based on the py-VirtualKeyboard (https://github.com/surajsinghbisht054/py-VirtualKeyBoard) by S.S.B Group (http://www.bitforestinfo.com/) written in python using Tkinter And pyautogui
 
 #Modification for Pāli/Sanskrit Diacritics by Raryel C. Souza
