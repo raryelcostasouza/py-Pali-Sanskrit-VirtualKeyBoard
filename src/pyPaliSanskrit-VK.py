@@ -25,7 +25,7 @@
 # ========== Configurations ====================
 BUTTON_BACKGROUND 		= "black"
 MAIN_FRAME_BACKGROUND 	= "cornflowerblue"
-BUTTON_LOOK 			= "flat" #flat, groove, raised, ridge, solid, or sunken
+BUTTON_LOOK 			= "groove" #flat, groove, raised, ridge, solid, or sunken
 TOP_BAR_TITLE 			= "pyPaliSanskrit-VK"
 TOPBAR_BACKGROUND 		= "skyblue"
 TRANSPARENCY 			= 0.7
@@ -41,6 +41,8 @@ except:
 
 import pyautogui
 import pyperclip
+import time
+import platform
 
 keys =[ 
 [
@@ -53,9 +55,8 @@ keys =[
 		("Character_Keys"),
 		({'side':'top','expand':'yes','fill':'both'}),
 		[
-			('Ā','Ḍ','Ī','Ḷ','Ṃ','Ṅ','Ṇ','Ñ','Ṭ','Ū'),
-			('ā','ḍ','ī','ḷ','ṃ','ṅ','ṇ','ñ','ṭ','ū'),
-			(' ',' ',' ',' ','ṁ',' ',' ',' ',' ',' '),
+			('Ā','Ḍ','Ī','Ḷ','Ṃ','Ṁ','Ṅ','Ṇ','Ñ','Ṭ','Ū'),
+			('ā','ḍ','ī','ḷ','ṃ','ṁ','ṅ','ṇ','ñ','ṭ','ū'),
 			('Ḥ','Ḹ','Ṛ','Ṝ','Ṣ','Ś'),
 			('ḥ','ḹ','ṛ','ṝ','ṣ','ś'),
 		]
@@ -98,7 +99,7 @@ class Keyboard(Tkinter.Frame):
 					for k in key_bunch:
 						
 						if len(k)<=3:
-							store_button = Tkinter.Button(store_key_frame, text=k, width=2, height=2)
+							store_button = Tkinter.Button(store_key_frame, text=k, width=2, height=2, font=('Arial', 12))
 						else:
 							store_button = Tkinter.Button(store_key_frame, text=k.center(5,' '), height=2)
 						if " " in k:
@@ -114,10 +115,22 @@ class Keyboard(Tkinter.Frame):
 
 		# Function For Detecting Pressed Keyword.
 	def button_command(self, event):
-		#for unicode characters it is easier to use this workaround than to send to pyautogui.press()
-		pyperclip.copy(event)
-		pyautogui.hotkey("ctrl", "v")
-		return
+                #for unicode characters it is easier to use this workaround than to send to pyautogui.press()
+                pyperclip.copy(event)
+
+                #on windows is necessary to change the focus to the app that will receive the text input before pasting it
+                if platform.system() == "Windows":
+                    pyautogui.hotkey("alt", "tab")
+                    #after switching the focus with alt tab give a small interval for the focus update
+                    time.sleep(0.1)
+                    #paste the text on the focused app
+                    pyautogui.hotkey("ctrl", "v")
+                    #bring the focus back to the virtual keyboard
+                    pyautogui.hotkey("alt", "tab")
+                #on linux and macos the focus change is not necessary. Can paste the text straight away
+                else:
+                    pyautogui.hotkey("ctrl", "v")                
+                return
 
 class top_moving_mechanism:
 	def __init__(self, root, label):
@@ -137,11 +150,22 @@ def main():
 	root = Tkinter.Tk(className=TOP_BAR_TITLE)
 	k=Keyboard(root, bg=MAIN_FRAME_BACKGROUND)
 
-	# Confifuration
+	# Configuration
 	root.overrideredirect(True)
 	root.wait_visibility(root)
 	root.wm_attributes('-alpha',TRANSPARENCY)
-	# Custum
+
+	#floating window always on top
+	root.wm_attributes("-topmost", 1)
+	
+	screenWidth = root.winfo_screenwidth()
+	screenHeight = root.winfo_screenheight()
+
+        #window dimensions
+	windowWidth = 390
+	windowHeight = 330
+	
+	# Custom
 	f = Tkinter.Frame(root)
 	t_bar=Tkinter.Label(f, text=TOP_BAR_TITLE, bg=TOPBAR_BACKGROUND)
 	t_bar.pack(side='left',expand="yes", fill="both")
@@ -150,9 +174,16 @@ def main():
 	Tkinter.Button(f, text="[X]", command= root.destroy).pack(side='right')
 	f.pack(side='top', expand='yes',fill='both')
 	k.pack(side='top')
+
+	#position the virtual keyboard on the bottom right corner of the screen
+	x = (screenWidth-windowWidth)
+	y = (screenHeight-windowHeight-50)
+	root.geometry('%dx%d+%d+%d' % (windowWidth, windowHeight, x, y))
+	
 	root.mainloop()
 	return
 
 # Function Trigger
 if __name__=='__main__':
 	main()
+
