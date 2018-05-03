@@ -27,7 +27,6 @@ BUTTON_BACKGROUND 		= "black"
 MAIN_FRAME_BACKGROUND 	= "cornflowerblue"
 BUTTON_LOOK 			= "groove" #flat, groove, raised, ridge, solid, or sunken
 TOP_BAR_TITLE 			= "pyPaliSanskrit-VK"
-TOPBAR_BACKGROUND 		= "skyblue"
 TRANSPARENCY 			= 0.7
 FONT_COLOR 				= "white"
 
@@ -132,52 +131,32 @@ class Keyboard(Tkinter.Frame):
                     pyautogui.hotkey("ctrl", "v")                
                 return
 
-class top_moving_mechanism:
-	def __init__(self, root, label):
-		self.root = root
-		self.label = label
-
-	def motion_activate(self, kwargs):
-		w,h = (self.root.winfo_reqwidth(), self.root.winfo_reqheight())
-		(x,y) = (kwargs.x_root, kwargs.y_root)
-		self.root.geometry("%dx%d+%d+%d" % (w,h,x,y))
-		return
-
-
-
 # Creating Main Window
 def main():
 	root = Tkinter.Tk(className=TOP_BAR_TITLE)
 	k=Keyboard(root, bg=MAIN_FRAME_BACKGROUND)
-
-	# Configuration
-	root.overrideredirect(True)
 	root.wait_visibility(root)
-	root.wm_attributes('-alpha',TRANSPARENCY)
+
+        #block maximize/minimize button
+	root.resizable(0,0)
 
 	#floating window always on top
 	root.wm_attributes("-topmost", 1)
+	root.wm_attributes('-alpha',TRANSPARENCY)
 	
+	k.pack(side='top')
+
+        #screen dimensions
 	screenWidth = root.winfo_screenwidth()
 	screenHeight = root.winfo_screenheight()
 
         #window dimensions
-	windowWidth = 390
-	windowHeight = 330
+	windowWidth = k.winfo_reqwidth()
+	windowHeight = k.winfo_reqheight()
 	
-	# Custom
-	f = Tkinter.Frame(root)
-	t_bar=Tkinter.Label(f, text=TOP_BAR_TITLE, bg=TOPBAR_BACKGROUND)
-	t_bar.pack(side='left',expand="yes", fill="both")
-	mechanism = top_moving_mechanism(root, t_bar)
-	t_bar.bind("<B1-Motion>", mechanism.motion_activate)
-	Tkinter.Button(f, text="[X]", command= root.destroy).pack(side='right')
-	f.pack(side='top', expand='yes',fill='both')
-	k.pack(side='top')
-
 	#position the virtual keyboard on the bottom right corner of the screen
 	x = (screenWidth-windowWidth)
-	y = (screenHeight-windowHeight-50)
+	y = (screenHeight-windowHeight-90)
 	root.geometry('%dx%d+%d+%d' % (windowWidth, windowHeight, x, y))
 	
 	root.mainloop()
