@@ -63,6 +63,9 @@ keys =[
 ],
 ]
 
+# Create key event
+def create_keyboard_event(numlock, capslock, controler, key):
+	return
 
 ##  Frame Class
 class Keyboard(Tkinter.Frame):
