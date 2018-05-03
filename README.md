@@ -9,14 +9,17 @@
 1. pyautogui
 2. pyperclip
 3. tkinter
+4. pyInstaller (for generating standalone native apps)
 
-# Portable app for Windows / Linux / Mac OS
+# Portable app for Windows / Linux
+
 No installation needed. No admin rights needed.
-https://github.com/raryelcostasouza/pyPaliSanskrit-VK/releases/tag/v1.0.1
+Download at https://github.com/raryelcostasouza/pyPaliSanskrit-VK/releases/tag/v1.0.1
 
 # ScreenShot
 
-![pyPaliSanskrit-VK Screenshot 1](screenshots/screenshot1.png?raw=true "pyPaliSanskrit-VK")
+![pyPaliSanskrit-VK Screenshot Windows](screenshots/screenshot-windows.png?raw=true "pyPaliSanskrit-VK")
+![pyPaliSanskrit-VK Screenshot 2](screenshots/screenshot1.png?raw=true "pyPaliSanskrit-VK")
 
 ----
 
