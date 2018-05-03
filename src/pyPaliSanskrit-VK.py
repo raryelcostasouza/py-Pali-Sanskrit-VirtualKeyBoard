@@ -63,9 +63,6 @@ keys =[
 ],
 ]
 
-# Create key event
-def create_keyboard_event(numlock, capslock, controler, key):
-    return
 
 ##  Frame Class
 class Keyboard(Tkinter.Frame):
@@ -129,7 +126,6 @@ class Keyboard(Tkinter.Frame):
                 #on linux and macos the focus change is not necessary. Can paste the text straight away
                 else:
                     pyautogui.hotkey("ctrl", "v")
-                    print("here")
                 return
 
 #listener for moving the window on Linux
@@ -142,7 +138,6 @@ class top_moving_mechanism:
 		w,h = (self.root.winfo_reqwidth(), self.root.winfo_reqheight())
 		(x,y) = (kwargs.x_root, kwargs.y_root)
 		self.root.geometry("%dx%d+%d+%d" % (w,h,x,y))
-		print("moving window size:", w, h)
 		return
 
 
