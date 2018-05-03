@@ -11,7 +11,8 @@
 3. tkinter
 
 # Portable app for Windows / Linux / Mac OS
-Coming soon
+No installation needed. No admin rights needed.
+https://github.com/raryelcostasouza/pyPaliSanskrit-VK/releases/tag/v1.0.1
 
 # ScreenShot
 
