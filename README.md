@@ -18,7 +18,7 @@ Download at https://github.com/raryelcostasouza/pyPaliSanskrit-VK/releases/tag/v
 
 # ScreenShot
 
-![pyPaliSanskrit-VK Screenshot Windows](screenshots/screenshot-windows.png?raw=true "pyPaliSanskrit-VK")
+![pyPaliSanskrit-VK Screenshot Windows](screenshots/screenshot-windows.PNG?raw=true "pyPaliSanskrit-VK")
 ![pyPaliSanskrit-VK Screenshot 2](screenshots/screenshot1.png?raw=true "pyPaliSanskrit-VK")
 
 ----
