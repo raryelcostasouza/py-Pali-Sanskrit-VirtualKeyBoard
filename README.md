@@ -18,11 +18,11 @@ Download at https://github.com/raryelcostasouza/pyPaliSanskrit-VK/releases/tag/v
 
 # Screenshots
 
-#Windows
+# Windows
 
 ![pyPaliSanskrit-VK Screenshot Windows](screenshots/screenshot-windows.PNG?raw=true "pyPaliSanskrit-VK")
 
-#Linux
+# Linux
 ![pyPaliSanskrit-VK Screenshot 2](screenshots/screenshot1.png?raw=true "pyPaliSanskrit-VK")
 
 ----
