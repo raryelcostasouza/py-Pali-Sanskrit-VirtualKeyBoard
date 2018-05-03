@@ -154,8 +154,8 @@ def main():
     root.wm_attributes("-topmost", 1)
     if platform.system() == "Windows":
         #adjustments to put the window on the bottom right corner without covering the task bar
-        yAdjust = -90
-        xAdjust = -10
+        yAdjust = 90
+        xAdjust = 10
     else:
         #on Linux/MacOS the overrideredirect option need to be on to send the output to other app without having to change focus manually
         #so the default system window decorations will be suppressed
