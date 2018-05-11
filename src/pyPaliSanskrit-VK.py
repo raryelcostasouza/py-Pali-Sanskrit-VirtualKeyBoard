@@ -28,7 +28,6 @@ MAIN_FRAME_BACKGROUND 	= "cornflowerblue"
 BUTTON_LOOK 			= "groove" #flat, groove, raised, ridge, solid, or sunken
 TOP_BAR_TITLE 			= "pyPaliSanskrit-VK"
 TOPBAR_BACKGROUND 		= "skyblue"
-FONT_COLOR 				= "white"
 
 # ==============================================
 
@@ -42,6 +41,7 @@ import pyautogui
 import pyperclip
 import time
 import platform
+import threading
 
 keys =[ 
 [
@@ -72,10 +72,11 @@ class Keyboard(Tkinter.Frame):
     def __init__(self, *args, **kwargs):
         Tkinter.Frame.__init__(self, *args, **kwargs)
         
-
         # Function For Creating Buttons
         self.create_frames_and_buttons()
-
+        
+        #semaphore variable used to prevent multiple key pressing
+        self.lock = False
 
 
     # Function For Extracting Data From KeyBoard Table
@@ -96,40 +97,80 @@ class Keyboard(Tkinter.Frame):
                     store_key_frame = Tkinter.Frame(store_layer)
                     store_key_frame.pack(side='top',expand='yes',fill='both')
                     for k in key_bunch:
-                        
-                        if len(k)<=3:
-                            store_button = Tkinter.Button(store_key_frame, text=k, width=2, height=2, font=('Arial', 12))
-                        else:
-                            store_button = Tkinter.Button(store_key_frame, text=k.center(5,' '), height=2)
-                        if " " in k:
-                            store_button['state']='disable'
+                        store_button = Tkinter.Button(store_key_frame, text=k, width=2, height=2, font=('Arial', 16))
                         
                         store_button['relief']=BUTTON_LOOK
                         store_button['bg']=BUTTON_BACKGROUND
-                        store_button['fg']=FONT_COLOR
+                        
+                        #for MacOS as the buttons have clear blackground need to use a black font
+                        if platform.system() == "Darwin":
+                            FONT_COLOR = "black"
+                        else:
+                            FONT_COLOR = "white"
+                            
+                        store_button['fg'] = FONT_COLOR
 
-                        store_button['command']=lambda q=k: self.button_command(q)
+                        store_button['command']=lambda q=k: self.actionClickButton(q)
                         store_button.pack(side='left',fill='both',expand='yes')
         return
 
-        # Function For Detecting Pressed Keyword.
-    def button_command(self, event):
-                #for unicode characters it is easier to use this workaround than to send to pyautogui.press()
-                pyperclip.copy(event)
+    # Listener function for clicked button
+    def actionClickButton(self, event):
+        
+        #thread for typing the clicked button on the focused app
+        
+        #MacOS version
+        def actionMac():
+            #Lock the semaphore variable for preventing multiple keys pressing
+            self.lock = True 
+            pyperclip.copy(event)
 
-                #on windows is necessary to change the focus to the app that will receive the text input before pasting it
+            #switch focus to the other app that will receive the key input
+            pyautogui.hotkey("command", "tab")
+            
+            #paste the text on the focused app
+            pyautogui.hotkey("command", "v")
+            
+            #Release the semaphore variable
+            self.lock = False
+        
+        #Windows version
+        def actionWindows():
+            #Lock the semaphore variable for preventing multiple keys pressing
+            self.lock = True 
+            pyperclip.copy(event)
+            
+            #switch focus to the other app that will receive the key input
+            pyautogui.hotkey("alt", "tab")
+            
+            #after switching the focus with alt tab give a small interval for the focus update
+            time.sleep(0.1)
+            
+            #paste the sanskrit/pali letter on the focused app
+            pyautogui.hotkey("ctrl", "v")
+            
+            #Release the semaphore variable
+            self.lock = False
+            
+        
+        if platform.system() == "Linux":
+            #on Linux the focus change is not necessary. Can paste the text straight away
+            pyperclip.copy(event)
+            pyautogui.hotkey("ctrl", "v")
+        else:
+            
+            #for MacOS and Windows it is necessary to switch the focus manually to the other app before pasting the text
+            #so use a separate thread to handle the task to avoid gui freezing
+            
+            #if the semaphore variable is not locked
+            if not self.lock:
+                #open a separate thread to execute the sequence of commands without freezing the GUI
                 if platform.system() == "Windows":
-                    pyautogui.hotkey("alt", "tab")
-                    #after switching the focus with alt tab give a small interval for the focus update
-                    time.sleep(0.1)
-                    #paste the text on the focused app
-                    pyautogui.hotkey("ctrl", "v")
-                    #bring the focus back to the virtual keyboard
-                    pyautogui.hotkey("alt", "tab")
-                #on linux and macos the focus change is not necessary. Can paste the text straight away
+                    t = threading.Thread(target=actionWindows)
                 else:
-                    pyautogui.hotkey("ctrl", "v")
-                return
+                    t = threading.Thread(target=actionMac)
+                t.start()
+        return
 
 #listener for moving the window on Linux
 class top_moving_mechanism:
@@ -159,8 +200,12 @@ def main():
         #adjustments to put the window on the bottom right corner without covering the task bar
         yAdjust = 90
         xAdjust = 10
+    #for Mac OS
+    elif platform.system() == "Darwin":
+        yAdjust = 110
+        xAdjust = 10
     else:
-        #on Linux/MacOS the overrideredirect option need to be on to send the output to other app without having to change focus manually
+        #on Linux the overrideredirect option need to be on to send the output to other app without having to change focus manually
         #so the default system window decorations will be suppressed
         root.overrideredirect(True)
         
@@ -190,8 +235,8 @@ def main():
     windowWidth = k.winfo_reqwidth()
     windowHeight = k.winfo_reqheight()
     
-    #on Linux/MacOS the title bar dimensions need to be added to the window height calculation
-    if platform.system() != "Windows":
+    #on Linux the title bar dimensions need to be added to the window height calculation
+    if platform.system() == "Linux":
         windowHeight += f.winfo_reqheight()
     
     #position the virtual keyboard on the bottom right corner of the screen
