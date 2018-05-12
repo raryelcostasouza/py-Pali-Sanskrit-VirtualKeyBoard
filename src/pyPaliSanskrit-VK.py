@@ -20,14 +20,13 @@
 #Based on the project py-virtual-keyboard (https://github.com/surajsinghbisht054/py-VirtualKeyBoard), 
 #developed by S.S.B Group (surajsinghbisht054@gmail.com / http://bitforestinfo.blogspot.com/) written in python using Tkinter And pyautogui
 
-#Modifications for Pāli/Sanskrit Diacritics by Raryel C. Souza
+#Modifications for Pāli/Sanskrit Diacritics and adaptations for compatibility with multiple operating systems by Raryel C. Souza
 
 # ========== Configurations ====================
 BUTTON_BACKGROUND 		= "black"
 MAIN_FRAME_BACKGROUND 	= "cornflowerblue"
 BUTTON_LOOK 			= "groove" #flat, groove, raised, ridge, solid, or sunken
 TOP_BAR_TITLE 			= "pyPaliSanskrit-VK"
-TOPBAR_BACKGROUND 		= "skyblue"
 
 # ==============================================
 
@@ -42,6 +41,7 @@ import pyperclip
 import time
 import platform
 import threading
+from pykeyboard import PyKeyboard
 
 keys =[ 
 [
@@ -87,7 +87,7 @@ class Keyboard(Tkinter.Frame):
         for key_section in keys:
             # create Sperate Frame For Every Section
             store_section = Tkinter.Frame(self)
-            store_section.pack(side='left',expand='yes',fill='both',padx=0,pady=0,ipadx=0,ipady=0)
+            store_section.pack(side='left',expand='yes',fill='both')
             
             for layer_name, layer_properties, layer_keys in key_section:
                 store_layer = Tkinter.LabelFrame(store_section)#, text=layer_name)
@@ -97,7 +97,7 @@ class Keyboard(Tkinter.Frame):
                     store_key_frame = Tkinter.Frame(store_layer)
                     store_key_frame.pack(side='top',expand='yes',fill='both')
                     for k in key_bunch:
-                        store_button = Tkinter.Button(store_key_frame, text=k, width=2, height=2, font=('Arial', 16))
+                        store_button = Tkinter.Button(store_key_frame, text=k, font=('Arial', 16))
                         
                         store_button['relief']=BUTTON_LOOK
                         store_button['bg']=BUTTON_BACKGROUND
@@ -128,14 +128,17 @@ class Keyboard(Tkinter.Frame):
             #switch focus to the other app that will receive the key input
             pyautogui.hotkey("command", "tab")
             
+            #for mac the pyautogui.hotkey() does not work consistenly for pasting shortcut... so we use a different library
+            
+            k = PyKeyboard()
             #paste the text on the focused app
-            pyautogui.hotkey("command", "v")
+            k.press_keys(['Command', 'v'])
             
             #Release the semaphore variable
             self.lock = False
         
-        #Windows version
-        def actionWindows():
+        #Windows/Linux version
+        def actionWindowsLinux():
             #Lock the semaphore variable for preventing multiple keys pressing
             self.lock = True 
             pyperclip.copy(event)
@@ -143,47 +146,24 @@ class Keyboard(Tkinter.Frame):
             #switch focus to the other app that will receive the key input
             pyautogui.hotkey("alt", "tab")
             
-            #after switching the focus with alt tab give a small interval for the focus update
-            time.sleep(0.1)
-            
             #paste the sanskrit/pali letter on the focused app
             pyautogui.hotkey("ctrl", "v")
             
             #Release the semaphore variable
-            self.lock = False
+            self.lock = False    
             
+        #for MacOS and Windows it is necessary to switch the focus manually to the other app before pasting the text
+        #so use a separate thread to handle the task to avoid gui freezing
         
-        if platform.system() == "Linux":
-            #on Linux the focus change is not necessary. Can paste the text straight away
-            pyperclip.copy(event)
-            pyautogui.hotkey("ctrl", "v")
-        else:
-            
-            #for MacOS and Windows it is necessary to switch the focus manually to the other app before pasting the text
-            #so use a separate thread to handle the task to avoid gui freezing
-            
-            #if the semaphore variable is not locked
-            if not self.lock:
-                #open a separate thread to execute the sequence of commands without freezing the GUI
-                if platform.system() == "Windows":
-                    t = threading.Thread(target=actionWindows)
-                else:
-                    t = threading.Thread(target=actionMac)
-                t.start()
+        #if the semaphore variable is not locked
+        if not self.lock:
+            #open a separate thread to execute the sequence of commands without freezing the GUI
+            if ((platform.system() == "Windows") or (platform.system() == "Linux")):
+                t = threading.Thread(target=actionWindowsLinux)
+            else:
+                t = threading.Thread(target=actionMac)
+            t.start()
         return
-
-#listener for moving the window on Linux
-class top_moving_mechanism:
-	def __init__(self, root, label):
-		self.root = root
-		self.label = label
-
-	def motion_activate(self, kwargs):
-		w,h = (self.root.winfo_reqwidth(), self.root.winfo_reqheight())
-		(x,y) = (kwargs.x_root, kwargs.y_root)
-		self.root.geometry("%dx%d+%d+%d" % (w,h,x,y))
-		return
-
 
 # Creating Main Window
 def main():
@@ -194,8 +174,8 @@ def main():
     root.resizable(0,0)
 
     #floating window always on top
-    
     root.wm_attributes("-topmost", 1)
+    
     if platform.system() == "Windows":
         #adjustments to put the window on the bottom right corner without covering the task bar
         yAdjust = 90
@@ -205,26 +185,11 @@ def main():
         yAdjust = 110
         xAdjust = 10
     else:
-        #on Linux the overrideredirect option need to be on to send the output to other app without having to change focus manually
-        #so the default system window decorations will be suppressed
-        root.overrideredirect(True)
-        
-        #create the window top decoration and the close button
-        f = Tkinter.Frame(root)
-        t_bar=Tkinter.Label(f, text=TOP_BAR_TITLE, bg=TOPBAR_BACKGROUND)
-        t_bar.pack(side='left',expand="yes", fill="both")
-        Tkinter.Button(f, text="[X]", command= root.destroy).pack(side='right')
-        
-        #listener for moving the window
-        mechanism = top_moving_mechanism(root, t_bar)
-        t_bar.bind("<B1-Motion>", mechanism.motion_activate)
-        
-        f.pack(side='top', expand='yes',fill='both')
+        #for Linux        
         
         #adjustments to put the window on the bottom right corner without covering the task bar
         yAdjust = 50
         xAdjust = 0
-    
     
     root.wait_visibility(root)
     #screen dimensions
@@ -234,10 +199,6 @@ def main():
     #window dimensions
     windowWidth = k.winfo_reqwidth()
     windowHeight = k.winfo_reqheight()
-    
-    #on Linux the title bar dimensions need to be added to the window height calculation
-    if platform.system() == "Linux":
-        windowHeight += f.winfo_reqheight()
     
     #position the virtual keyboard on the bottom right corner of the screen
     x = (screenWidth-windowWidth-xAdjust)
