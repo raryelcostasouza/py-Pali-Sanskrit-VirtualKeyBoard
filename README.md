@@ -2,7 +2,7 @@
 ## Virtual keyboard for input of Pāli/Sanskrit Diacritics
 #Based on the py-VirtualKeyboard (https://github.com/surajsinghbisht054/py-VirtualKeyBoard) by S.S.B Group (http://www.bitforestinfo.com/) written in python using Tkinter And pyautogui
 
-#Modification for Pāli/Sanskrit Diacritics and adaptations for compatibility with multiple operating systems by by Raryel C. Souza
+#Modification for Pāli/Sanskrit Diacritics and adaptations for compatibility with multiple operating systems by Raryel C. Souza
 
 # (For Users) Portable app for Windows / Mac OS /  Linux
 
