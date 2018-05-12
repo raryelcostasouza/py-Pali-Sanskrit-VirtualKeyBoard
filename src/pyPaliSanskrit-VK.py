@@ -41,7 +41,9 @@ import pyperclip
 import time
 import platform
 import threading
-from pykeyboard import PyKeyboard
+
+#for running on Windows/Linux comment the line below
+#from pykeyboard import PyKeyboard
 
 keys =[ 
 [
@@ -145,6 +147,9 @@ class Keyboard(Tkinter.Frame):
             
             #switch focus to the other app that will receive the key input
             pyautogui.hotkey("alt", "tab")
+
+            #wait a small interval to make sure the focus has changed properly
+            time.sleep(0.01)
             
             #paste the sanskrit/pali letter on the focused app
             pyautogui.hotkey("ctrl", "v")
