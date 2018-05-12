@@ -7,7 +7,7 @@
 # (For Users) Portable app for Windows / Mac OS /  Linux
 
 No installation needed. No admin rights needed.
-Download at https://github.com/raryelcostasouza/pyPaliSanskrit-VK/releases/tag/v1.0.1
+Download at https://github.com/raryelcostasouza/pyPaliSanskrit-VK/releases/tag/v1.0.3
 
 # Screenshots
 
